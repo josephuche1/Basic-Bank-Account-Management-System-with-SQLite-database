@@ -45,3 +45,4 @@ int is_user_in_database(sqlite3* db,  const char* username);
 bool correct_password(string username, string password, sqlite3* db);
 int print_details(sqlite3* db, string username);
 void get_details(sqlite3* db, string username,User& user);
+bool delete_user(sqlite3* db, string username);

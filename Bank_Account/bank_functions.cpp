@@ -342,3 +342,21 @@ int User::save_details(sqlite3* db, char* error_message, int& rc) {
 	sqlite3_free(sql);
 	return 0;
 }
+
+//
+bool delete_user(sqlite3* db, string username) {
+	string sql = "DELETE FROM USERS WHERE username = ?;";
+	sqlite3_stmt* stmt;
+	sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL);
+	sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_STATIC);
+	int result = sqlite3_step(stmt);
+	sqlite3_finalize(stmt);
+	if (result == SQLITE_DONE) {
+		cout << "Account Deleted.\n";
+		return true;
+	}
+	else {
+		cout << "Error occured during deletion.\n";
+		return false;
+	}
+}

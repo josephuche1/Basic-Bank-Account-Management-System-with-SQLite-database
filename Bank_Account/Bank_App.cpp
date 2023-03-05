@@ -16,7 +16,7 @@
 int main() {
 	sqlite3* database;
 	char* error_message = 0;
-	int rc,option;
+	int rc,option,breaker = 0;
 	const char* sql;
 	const char* data = "Callback function called.";
 
@@ -122,10 +122,11 @@ int main() {
 							cout << "1. Check Balance\n";
 							cout << "2. See Profile details\n";
 							cout << "3. Edit Profile Details\n";
-							cout << "4. Back.\n";
+							cout << "4. Delete my account\n";
+							cout << "5. Back.\n";
 							cin >> option;
 
-							while (option != 4) {
+							while (option != 5) {
 
 								cin.ignore();
 								if (option == 1) {
@@ -178,16 +179,22 @@ int main() {
 									}
 								}
 
+								else if(option == 4) {
+
+									delete_user(database, user.username);
+									breaker = 1;
+									break;
+
+								}
 								else {
-
-									cout << "Invalid Input\n";
-
+									cout << "Invalid input.\n";
 								}
 
 								cout << "1. Check Balance\n";
 								cout << "2. See Profile details\n";
 								cout << "3. Edit Profile Details\n";
-								cout << "4. Back.\n";
+								cout << "4. Delete my account\n";
+								cout << "5. Back.\n";
 								cin >> option;
 
 							}
@@ -199,7 +206,9 @@ int main() {
 							cout << "Invalid Input\n";
 
 						}
-
+						if (breaker == 1) {
+							break;
+						}
 						cout << "1. Deposit\n";
 						cout << "2. Withdraw\n";
 						cout << "3. Profile\n";
@@ -248,10 +257,11 @@ int main() {
 					cout << "1. Check Balance\n";
 					cout << "2. See Profile details\n";
 					cout << "3. Edit Profile Details\n";
-					cout << "4. Back.\n";
+					cout << "4. Delete my account\n";
+					cout << "5. Back.\n";
 					cin >> option;
 
-					while (option != 4) {
+					while (option != 5) {
 
 						cin.ignore();
 						if (option == 1) {
@@ -289,9 +299,16 @@ int main() {
 								cin >> option;
 							}
 						}
+						else if (option == 4) {
+							delete_user(database, user.username);
+							breaker = 1;
+							break;
+						}
 						else {
 							cout << "Invalid Input\n";
 						}
+
+						
 						cout << "1. Check Balance\n";
 						cout << "2. See Profile details\n";
 						cout << "3. Edit Profile Details\n";
@@ -302,6 +319,9 @@ int main() {
 				}
 				else {
 					cout << "Invalid Input\n";
+				}
+				if (breaker == 1) {
+					break;
 				}
 				cout << "1. Deposit\n";
 				cout << "2. Withdraw\n";
