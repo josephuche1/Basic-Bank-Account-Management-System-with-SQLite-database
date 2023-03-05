@@ -13,13 +13,12 @@
 using namespace std;
 
 /**
-* Structure <code>User</code> will be be used to create objects for every 
-* that creates an account with the bank
+* Class <code>User</code> will be be used to create objects for every user
+* that creates an account with the software
 * <BR>
-* @param id is used to store id number of every user
 * @param name is used to store the name of the user
-* @param username is used to store the username of every user
-* @param balance is initially set to zero but can be updated as user deposits and withdraws money
+* @param username is used to store the username of every user each users username is unique
+* @param balance is used to store the current balance of the user in the software
 * @param password is used to store the password of each user
 */
 class User {
@@ -34,7 +33,7 @@ public:
 	int save_details(sqlite3* db, char* error_message, int& rc);
 };
 
-// Prototype 
+// Prototype Functions
 
 int callback(void* data, int argc, char** argv, char** colName);
 double deposit(sqlite3* db, double amount, User& user);

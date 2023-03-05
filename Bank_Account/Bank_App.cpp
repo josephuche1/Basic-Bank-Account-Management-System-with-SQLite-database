@@ -1,7 +1,8 @@
 /** \file Bank_App.cpp
 * \brief The bank app for user interface.
 * \details This is the part of the project that the user will interact with and be able to access the functions in the
-* other necessary files
+* other necessary files.It provides users with access to the database and helps users add and manipulate their information.
+* In this file  suporting files such as users.h was added in order to access the functionality that are required for the application to run.
 * <BR>
 * \author Joseph Uche
 * \version 0.1
@@ -15,7 +16,7 @@
 int main() {
 	sqlite3* database;
 	char* error_message = 0;
-	int rc;
+	int rc,option;
 	const char* sql;
 	const char* data = "Callback function called.";
 
@@ -28,9 +29,10 @@ int main() {
 		return 1;
 	}
 	else {
-		cout << "Opened database successfully.\n";
+		cout << "Connection Successful.\n";
 	}
 
+	//Create database if not exists
 	sql = "CREATE TABLE IF NOT EXISTS USERS(" \
 		"name TEXT NOT NULL,"\
 		"username TEXT NOT NULL,"\
@@ -44,62 +46,79 @@ int main() {
 		sqlite3_free(error_message);
 	}
 	else {
-		cout << "Database created successfully.\n";
+		cout << "Connection Successful.\n";
 	}
 
-	int option;
+	
 
 	cout << "Welcome to the bank.\n";
 	cout << "1. Login\n";
 	cout << "2. Create Account\n";
-	cout << "3.Exit\n";
+	cout << "3. Exit\n";
 	cin >> option;
 
 	while (option != 3) {
+
 		cin.ignore();
-		User user;
+		User user; //Creates the user object from the class User
 		double amount;
 		string username;
 		string password;
 		string name;
+
 		if (option == 1) {
+
 			cout << "Username:";
 			getline(cin, username);
 			const char* userName = username.c_str();
 			cout << userName << endl;
 			int exist = is_user_in_database(database, userName);
+
 			if (exist <= 0) {
+
 				cout << "User does not exist.\n";
+
 			}
 			else {
+
 				cout << "Password:";
 				getline(cin, password);
+
 				if (correct_password(username, password, database)) {
+
 					get_details(database, username, user);
 					cout << "Welcome back, " << username << endl;
 					cout << "1. Deposit\n";
 					cout << "2. Withdraw\n";
 					cout << "3. Profile\n";
-					cout << "4.Back\n";
+					cout << "4. Back\n";
 					cin >> option;
 					cin.ignore();
+
 					while (option != 4) {
+
 						if (option == 1) {
+
 							cout << "Amount: ";
 							cin >> amount;
 							user.balance = deposit(database, amount, user);
+
 						}
 						else if (option == 2) {
+
 							cout << "Amount: ";
 							cin >> amount;
 							while (amount > user.balance) {
+
 								cout << "Insufficient funds\n";
 								cout << "Amount: ";
 								cin >> amount;
+
 							}
 							user.balance = withdraw(database, amount, user);
 						}
 						else if (option == 3) {
+
 							cout << "1. Check Balance\n";
 							cout << "2. See Profile details\n";
 							cout << "3. Edit Profile Details\n";
@@ -107,14 +126,19 @@ int main() {
 							cin >> option;
 
 							while (option != 4) {
+
 								cin.ignore();
 								if (option == 1) {
+
 									cout << "Balance: " << user.balance << endl;
 								}
 								else if (option == 2) {
+
 									print_details(database, user.username);
+
 								}
 								else if (option == 3) {
+
 									cout << "1. Change Name\n";
 									cout << "2. Change Username\n";
 									cout << "3. Change Password\n";
@@ -122,65 +146,93 @@ int main() {
 									cin >> option;
 
 									while (option != 4) {
+
 										cin.ignore();
 										if (option == 1) {
+
 											user.name = edit_name(database, name, user);
+
 										}
 										else if (option == 2) {
+
 											user.username = change_username(database, username, user);
+
 										}
 										else if (option == 3) {
+
 											user.password = change_password(database, password, user);
+
 										}
 										else {
+
 											cout << "Invalid Input\n";
+
 										}
+
 										cout << "1. Change Name\n";
 										cout << "2. Change Username\n";
 										cout << "3. Change Password\n";
 										cout << "4. Back\n";
 										cin >> option;
+
 									}
 								}
+
 								else {
+
 									cout << "Invalid Input\n";
+
 								}
+
 								cout << "1. Check Balance\n";
 								cout << "2. See Profile details\n";
 								cout << "3. Edit Profile Details\n";
 								cout << "4. Back.\n";
 								cin >> option;
+
 							}
 
 						}
+
 						else {
+
 							cout << "Invalid Input\n";
+
 						}
+
 						cout << "1. Deposit\n";
 						cout << "2. Withdraw\n";
 						cout << "3. Profile\n";
-						cout << "4.Back\n";
+						cout << "4. Back\n";
 						cin >> option;
+
 					}
 				}
 			}
 		}
+
 		else if (option == 2) {
+
 			user.read_details(database);
 			user.save_details(database, error_message, rc);
 			cout << "Welcome , " << user.username << endl;
 			cout << "1. Deposit\n";
 			cout << "2. Withdraw\n";
 			cout << "3. Profile\n";
-			cout << "4.Back\n";
+			cout << "4. Back\n";
 			cin >> option;
+
 			while (option != 4) {
+
+				cin.ignore();
 				if (option == 1) {
 					cout << "Amount: ";
 					cin >> amount;
 					user.balance = deposit(database, amount, user);
+
 				}
 				else if (option == 2) {
+
 					cout << "Amount: ";
 					cin >> amount;
 					while (amount > user.balance) {
@@ -188,17 +240,24 @@ int main() {
 						cout << "Amount: ";
 						cin >> amount;
 					}
+
 					user.balance = withdraw(database, amount, user);
 				}
 				else if (option == 3) {
+
 					cout << "1. Check Balance\n";
 					cout << "2. See Profile details\n";
 					cout << "3. Edit Profile Details\n";
 					cout << "4. Back.\n";
 					cin >> option;
+
 					while (option != 4) {
+
+						cin.ignore();
 						if (option == 1) {
+
 							cout << "Balance: " << user.balance << endl;
+
 						}
 						else if (option == 2) {
 							print_details(database, user.username);
@@ -210,6 +269,7 @@ int main() {
 							cout << "4. Back\n";
 							cin >> option;
 							while (option != 4) {
+								cin.ignore();
 								if (option == 1) {
 									user.name = edit_name(database, name, user);
 								}
@@ -246,7 +306,7 @@ int main() {
 				cout << "1. Deposit\n";
 				cout << "2. Withdraw\n";
 				cout << "3. Profile\n";
-				cout << "4.Back\n";
+				cout << "4. Back\n";
 				cin >> option;
 			}
 		}
@@ -255,7 +315,7 @@ int main() {
 		}
 		cout << "1. Login\n";
 		cout << "2. Create Account\n";
-		cout << "3.Exit\n";
+		cout << "3. Exit\n";
 		cin >> option;
 	}
 

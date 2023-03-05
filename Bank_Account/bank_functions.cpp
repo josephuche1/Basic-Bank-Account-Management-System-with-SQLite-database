@@ -1,5 +1,5 @@
 /** \file bank_functions.cpp
-* \brief This file contians the implementations of the bank functions necessary for the project
+* \brief This file contains the implementations of the bank functions necessary for Bank_App.cpp to run smoothly.
 * <BR>
 * \author Joseph Uche
 * \date 02-03-2023
@@ -7,7 +7,9 @@
 
 #include "user.h"
 
-//
+/**
+* Function <code>User</code> is a constructor for the class User .It sets all the class variables to an initial value.
+*/
 User::User() {
 	name = "";
 	username = "";
@@ -36,7 +38,8 @@ int callback(void* data, int argc, char** argv, char** colName) {
 /**
 * Function <code>deposit</code> adds the given value to the current user balance
 * @param amount is a value given by the user that they are willing to add to their balance
-* @param balance is the current user balance
+* @param db  is a pointer to the database in the main program where all users data is stored.
+* @param user is the object that refers to the user that is currently logged into the software
 * @return returns new user balance.
 */
 double deposit(sqlite3* db, double amount, User& user) {
@@ -60,7 +63,8 @@ double deposit(sqlite3* db, double amount, User& user) {
 /**
 * Function <code>withdraw</code> removes the given value from the current user balance
 * @param amount is a value given by the user that they are willing to remove from their balance
-* @param balance is the current user balance
+* @param db  is a pointer to the database in the main program where all users data is stored.
+* @param user is the object that refers to the user that is currently logged into the software
 * @return returns new user balance.
 */
 double withdraw(sqlite3* db, double amount, User& user) {
@@ -85,6 +89,8 @@ double withdraw(sqlite3* db, double amount, User& user) {
 /**
 * Function <code>edit_name</code> changes the users name.
 * @param new_name is the new name of the user.
+* @param db is a pointer to the database in the main program where all users data is stored.
+* @param user is the object that refers to the user that is currently logged into the software
 * @return returns the users new name.
 */
 string edit_name(sqlite3* db, string new_name, User& user) {
@@ -111,7 +117,8 @@ string edit_name(sqlite3* db, string new_name, User& user) {
 /**
 * Function <code>change_password</code> changes the users password.
 * @param new_password is the new password of the user.
-* @param confirm_password is used to cross check the new password
+* @param db is a pointer to the database in the main program where all users data is stored.
+* @param user is the object that refers to the user that is currently logged into the software
 * @return returns the users new password.
 */
 string change_password(sqlite3* db, string new_password, User& user) {
@@ -146,6 +153,8 @@ string change_password(sqlite3* db, string new_password, User& user) {
 /**
 * Function <code>change_username</code> changes the users username.
 * @param new_username is the new username of the user.
+* @param db is a pointer to the database in the main program where all users data is stored.
+* @param user is the object that refers to the user that is currently logged into the software
 * @return returns the users new username.
 */
 string change_username(sqlite3* db, string new_username, User& user) {
@@ -170,9 +179,9 @@ string change_username(sqlite3* db, string new_username, User& user) {
 
 /**
 * Function <code>is_user_in_database</code> is used to check if a user in already in the database
-* @param db refers to the database where all users details are stored
+* @param db is a pointer argument that refers to the database where all users details are stored
 * @param username is the username that will be looked for in the database each one is unique.
-* @return returns 0 if the user is not in database and 1 if the user is in the database.
+* @return returns 0 or less if the user is not in database and 1 if the user is in the database.
 */
 int is_user_in_database(sqlite3* db, const char* username) {
 	char sql[100];
@@ -186,7 +195,10 @@ int is_user_in_database(sqlite3* db, const char* username) {
 	return count>0;
 }
 
-//
+/**
+* Function <code>read_details</code> reads users deatils and stores them in the class.
+* @param db is a pointer argument that refers to the database where all users details are stored
+*/
 void User::read_details(sqlite3* db) {
 	cout << "Full Name: ";
 	getline(cin, name);
@@ -217,7 +229,15 @@ void User::read_details(sqlite3* db) {
 
 }
 
-//
+/**
+* Function <code>correct_password</code> checks if the password that the user entered is the same as the password on the username from the database
+* basically checking if the password is correct.
+* <BR>
+* @param username is the users username every users username is unique
+* @param password is the input from the user as password when the user is logging in.
+* @param db is a pointer to the database where all the users information are stored.
+* @return returns true if the password is correct and false if not.
+*/
 bool correct_password(string username, string password, sqlite3* db) {
 	string sql = "SELECT password FROM USERS WHERE username = ? AND password = ?";
 	sqlite3_stmt* stmt;
@@ -236,7 +256,12 @@ bool correct_password(string username, string password, sqlite3* db) {
 	}
 }
 
-//
+/**
+* Function <code>print_details</code> helps the user to see their details
+* @param db is a pointer to the database where all users information is stored.
+* @param username is the username of the user that will be used to search for the users own details.
+* @return returns the value for result at the end of the program.
+*/
 int print_details(sqlite3* db, string username) {
 	string sql = "SELECT name,username,password,balance FROM USERS WHERE username = ?";
 	sqlite3_stmt* stmt;
@@ -253,10 +278,10 @@ int print_details(sqlite3* db, string username) {
 	}
 	result = sqlite3_step(stmt);
 	if (result == SQLITE_ROW) {
-		cout << reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)) << endl;
-		cout << reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)) << endl;
-		cout << reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)) << endl;
-		cout << sqlite3_column_double(stmt, 3) << endl;
+		cout <<"Name: " << reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)) << endl;
+		cout <<"Username: " << reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)) << endl;
+		cout <<"Password: " << reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)) << endl;
+		cout <<"Balance: "<< sqlite3_column_double(stmt, 3) << endl;
 	}
 	else {
 		cout << SQLITE_ROW << endl;
@@ -267,7 +292,12 @@ int print_details(sqlite3* db, string username) {
 
 }
 
-//
+/**
+* Function <code>get_details</code> gets the users details from the database and stores as an object in a class.
+* @param db is a pointer to the database where all user information are stored.
+* @param username is the username of the user that will be used to search for their deatils in the database
+* @param user is an object of the class User where all the details will be stored.
+*/
 void get_details(sqlite3* db, string username, User& user) {
 	string sql = "SELECT name,username,password,balance FROM USERS WHERE username = ?";
 	sqlite3_stmt* stmt;
@@ -287,7 +317,13 @@ void get_details(sqlite3* db, string username, User& user) {
 	sqlite3_finalize(stmt);
 }
 
-//
+/**
+* Function <code>save_details</code> is a class function that saves the deatils of the user to the database after they have created an account in the software.
+* @param db is pointer to the databse where all users detiailsa re stored.
+* @param error_message is apointer that stores all the error messages that are return in function.
+* @param rc is an integer variable that is used to store the return values for the all SQL statements execution in the function.
+* @return returns 1 if the functio gives an error and zero otherwise.
+*/
 int User::save_details(sqlite3* db, char* error_message, int& rc) {
 
 	char* sql;
