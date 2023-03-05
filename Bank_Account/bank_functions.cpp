@@ -343,7 +343,14 @@ int User::save_details(sqlite3* db, char* error_message, int& rc) {
 	return 0;
 }
 
-//
+/**
+* Function <code>delete_user</code> deletes searches for a user in the database and deletes their information
+* from it
+* <BR>
+* @param db is a pointer to the database that was used to store user information.
+* @param username is a string that is the user's username that will be used to look for the users information in the database.
+* @return returns true if the user was successfully deleted and false if otherwise
+*/
 bool delete_user(sqlite3* db, string username) {
 	string sql = "DELETE FROM USERS WHERE username = ?;";
 	sqlite3_stmt* stmt;
