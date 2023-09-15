@@ -312,7 +312,8 @@ int main() {
 						cout << "1. Check Balance\n";
 						cout << "2. See Profile details\n";
 						cout << "3. Edit Profile Details\n";
-						cout << "4. Back.\n";
+						cout << "4. Delete my account\n";
+						cout << "5. Back.\n";
 						cin >> option;
 					}
 
